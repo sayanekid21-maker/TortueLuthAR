@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR Tortue</title>
+
+  <!-- model-viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+
+  <model-viewer
+    id="turtle"
+    src="assets/models/_adult_leatherback_sea_turtle_mac.glb"
+    ios-src="assets/models/_adult_leatherback_sea_turtle_mac.usdz"
+    ar
+    ar-modes="scene-viewer quick-look webxr"
+    camera-controls
+    autoplay
+    exposure="1"
+    shadow-intensity="1"
+    environment-image="neutral"
+    scale="1 1 1"
+    animation-crossfade-duration="0.3">
+
+  </model-viewer>
+
+  <script>
+    const mv = document.querySelector("#turtle");
+
+    // Quand le modèle est chargé
+    mv.addEventListener("load", () => {
+      console.log("Modèle chargé");
+
+      // Vérifie les animations disponibles
+      console.log("Animations :", mv.availableAnimations);
+
+      // Lance l'animation dans le navigateur (PAS en AR iOS)
+      if (mv.availableAnimations && mv.availableAnimations.length > 0) {
+        mv.animationName = mv.availableAnimations[0];
+        mv.play();
+      }
+    });
+
+    // Gestion AR
+    mv.addEventListener("ar-status", (event) => {
+      const status = event.detail.status;
+      console.log("AR status:", status);
+
+      // Quand AR démarre (iPhone / Android)
+      if (status === "session-started") {
+        // iOS Quick Look → animations souvent désactivées
+        mv.pause();
+      }
+    });
+  </script>
+
+</body>
+</html>
